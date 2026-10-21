@@ -51,6 +51,7 @@ if (cfg && cfg.apiKey && !cfg.apiKey.startsWith('PASTE')) {
       btn.textContent = 'Sign in';
       btn.classList.remove('signed');
       window.__cloudSave = null;
+      window.__sidalogUser = null;
       window.__setCloud(false);
       return;
     }
@@ -69,6 +70,7 @@ if (cfg && cfg.apiKey && !cfg.apiKey.startsWith('PASTE')) {
     btn.append(av);
     btn.setAttribute('aria-label', 'Account');
     btn.classList.add('signed');
+    window.__sidalogUser = { name: user.displayName || '', email: user.email || '' };
 
     const col = collection(db, 'users', user.uid, 'marks');
     window.__cloudSave = (id, data) => setDoc(doc(col, id), data);

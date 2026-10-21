@@ -7,3 +7,6 @@ window.SIDALOG_FIREBASE = {
   messagingSenderId: "333682161010",
   appId: "1:333682161010:web:15333a4b4e78a4c326d9eb"
 };
+
+// Where 'Suggest a place' and place feedback are emailed (via FormSubmit).
+window.SIDALOG_FEEDBACK = { mode: 'form', to: 'sidaaaaaaa111@gmail.com' };

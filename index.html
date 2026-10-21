@@ -268,7 +268,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
     <div class="activebar" id="active"></div>
     <div class="grid" id="grid"></div>
     <div class="more" id="more" hidden><button type="button" id="moreBtn">Show more</button></div>
-    <footer class="foot"><span class="foot-mark">sidalog</span><span>Curated, sorted, savoured.</span></footer>
+    <footer class="foot"><span class="foot-mark">sidalog</span><span>Curated, sorted, savoured.</span><button type="button" class="fb-cta" data-fb="suggest">Suggest a place</button></footer>
   </section>
 </main>
 <div class="scrim" id="scrim" hidden></div>
@@ -276,6 +276,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
 
 <script src="art.js"></script>
 <script src="search.js"></script>
+<script src="feedback.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
@@ -471,6 +472,7 @@ function sheetHTML(p){
       </div>
       ${canWrite?`<textarea id="sh-note" placeholder="Add a note, e.g. what to order or who to go with">${esc(m.note||'')}</textarea><div class="note-row"><span class="saved" id="sh-saved" hidden>Saved</span><button type="button" class="btn" data-act="note">Save note</button></div>`:(m.note?`<div class="mynote">${esc(m.note)}</div>`:'')}
     </div>
+    <div class="sec"><button type="button" class="fb-link" data-fb="feedback" data-place="${esc(p.n)}">Send feedback on this place</button></div>
   </div>`;
 }
 function openSheet(id){sheetId=id;const p=PLACES.find(x=>x.id===id);if(!p)return;const s=$('#sheet');s.innerHTML=sheetHTML(p);s.hidden=false;$('#scrim').hidden=false;s.scrollTop=0;s.querySelector('.sh-x').focus()}
