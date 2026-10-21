@@ -1,5 +1,5 @@
 // sidalog: "Suggest a place" and "Feedback on this place", delivered to Sida by email.
-// SIDALOG_FEEDBACK.mode: 'form' posts through FormSubmit; 'mailto' opens the visitor's mail app.
+// SIDALOG_FEEDBACK.mode: 'script' posts to Sida's Google Apps Script (emails him); 'mailto' opens the visitor's mail app.
 (function () {
   const C = window.SIDALOG_FEEDBACK || {};
   const $ = s => document.querySelector(s);
@@ -55,7 +55,7 @@
       const [w2, i2] = field('fb-where', 'Google Maps link or area', true, 'input', { placeholder: 'Paste a link, or e.g. Chinatown' });
       fPlace = i1; fWhere = i2; form.append(w1, w2);
     }
-    const [w3, fMsg] = field('fb-msg', isFb ? 'Your feedback' : 'Why it’s worth adding', false, 'textarea', { required: '', placeholder: isFb ? 'What should Sida know?' : 'What to order, the vibe, price…' });
+    const [w3, fMsg] = field('fb-msg', isFb ? 'Your feedback' : 'Why it’s worth adding', !isFb, 'textarea', { ...(isFb ? { required: '' } : {}), placeholder: isFb ? 'What should Sida know?' : 'What to order, the vibe, price…' });
     form.append(w3);
     const row = el('div', { class: 'row' });
     const [w4, fName] = field('fb-name', 'Your name', true, 'input', { autocomplete: 'name' });
@@ -80,13 +80,14 @@
     form.onsubmit = async e => {
       e.preventDefault();
       msg.className = 'fb-msg'; msg.textContent = '';
-      if ((fPlace && !fPlace.value.trim()) || !fMsg.value.trim()) { msg.className = 'fb-msg err'; msg.textContent = fPlace && !fPlace.value.trim() ? 'Please add the place name.' : 'Please write a short message.'; return; }
+      if (fPlace && !fPlace.value.trim()) { msg.className = 'fb-msg err'; msg.textContent = 'Please add the place name.'; return; }
+      if (isFb && !fMsg.value.trim()) { msg.className = 'fb-msg err'; msg.textContent = 'Please write a short message.'; return; }
       if (hpi.value) { close(); return; }
       const subject = isFb ? `sidalog feedback: ${place}` : `sidalog suggestion: ${fPlace.value.trim()}`;
       const lines = [
         isFb ? `Place: ${place}` : `Place: ${fPlace.value.trim()}`,
         !isFb && fWhere.value.trim() ? `Where / link: ${fWhere.value.trim()}` : '',
-        `Message: ${fMsg.value.trim()}`,
+        fMsg.value.trim() ? `Message: ${fMsg.value.trim()}` : '',
         fName.value.trim() ? `From: ${fName.value.trim()}` : '',
         fEmail.value.trim() ? `Reply to: ${fEmail.value.trim()}` : '',
       ].filter(Boolean);
@@ -96,14 +97,18 @@
       }
       send.disabled = true; send.textContent = 'Sending…';
       try {
-        const body = { _subject: subject, _template: 'table', _captcha: 'false', Type: isFb ? 'Feedback' : 'New place suggestion', Place: isFb ? place : fPlace.value.trim() };
-        if (!isFb && fWhere.value.trim()) body['Where / link'] = fWhere.value.trim();
-        body.Message = fMsg.value.trim();
-        if (fName.value.trim()) body.name = fName.value.trim();
-        if (fEmail.value.trim()) { body.email = fEmail.value.trim(); body._replyto = fEmail.value.trim(); }
-        const r = await fetch(`https://formsubmit.co/ajax/${C.to}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
-        const j = await r.json().catch(() => ({}));
-        if (!r.ok || String(j.success) !== 'true') throw new Error(j.message || 'failed');
+        const body = {
+          subject,
+          Type: isFb ? 'Feedback' : 'New place suggestion',
+          Place: isFb ? place : fPlace.value.trim(),
+          'Where / link': !isFb ? fWhere.value.trim() : '',
+          Message: fMsg.value.trim(),
+          From: fName.value.trim(),
+          'Reply to': fEmail.value.trim(),
+          Page: location.href,
+        };
+        // Apps Script web app: plain-text POST avoids a CORS preflight; the response is opaque.
+        await fetch(C.endpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
         box.innerHTML = '';
         const done = el('div', { class: 'fb-done' });
         done.append(el('b', { text: 'Thank you!' }), el('span', { text: isFb ? 'Your feedback is on its way to Sida.' : 'Your suggestion is on its way to Sida.' }));
