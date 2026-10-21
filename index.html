@@ -11,8 +11,8 @@
 <meta property="og:url" content="https://sidalog.github.io/">
 <meta name="twitter:card" content="summary">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#141A21" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FBF6EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15110E" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -21,28 +21,31 @@
 <meta name="apple-mobile-web-app-title" content="sidalog">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400..800;1,400..700&display=swap">
 <style>
 /* Layout: app bar (brand, search, sort, filters) + quick-filter strip; desktop filter rail left, card list right; detail opens as a bottom sheet / side panel */
 :root{
-  --bg:#F3F4F6; --surface:#FFFFFF; --raised:#FFFFFF; --ink:#111827; --ink-2:#374151; --muted:#6B7280; --line:#E5E7EB; --soft:#F3F4F6;
-  --accent:#E8452C; --accent-ink:#FFFFFF; --accent-soft:#FDECE8;
-  --good:#15803D; --good-soft:#E7F6EC; --ok:#B45309; --ok-soft:#FDF3E3; --low:#6B7280; --low-soft:#F1F2F4;
-  --shadow:0 1px 2px rgba(17,24,39,.05),0 4px 14px rgba(17,24,39,.05);
-  --shadow-lg:0 -8px 40px rgba(17,24,39,.18);
-  --tile-f:#F4EFEA; --tile-d:#ECEFF3; --tile-s:#F5EDEE; --tile-o:#F0F1F3;
-  --font:"Open Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --bg:#FBF6EE; --surface:#FFFDF9; --raised:#FFFDF9; --ink:#2A211B; --ink-2:#4A3D33; --muted:#8A7E73; --line:#E9DECD; --soft:#F5EEE3;
+  --accent:#8A4F1C; --accent-ink:#FFFFFF; --accent-soft:#F3E6D6;
+  --good:#15803D; --good-soft:#E7F6EC; --ok:#B5651D; --ok-soft:#FDF3E3; --low:#8A7E73; --low-soft:#F5EEE3;
+  --star:#B5651D; --mi:#A3192C; --accent2:#8A4F1C;
+  --shadow:none;
+  --shadow-lg:0 -8px 40px rgba(42,33,27,.16);
+  --tile-f:#F6EDE2; --tile-d:#F3EDE5; --tile-s:#F6EAE5; --tile-o:#F2EDE6;
+  --font:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0B0F14; --surface:#141A21; --raised:#1A212A; --ink:#F3F4F6; --ink-2:#D1D5DB; --muted:#9CA3AF; --line:#262E38; --soft:#1C232C;
-  --accent:#FF6A4D; --accent-ink:#1A0D0A; --accent-soft:#3A1E18; --tile-f:#221E1B; --tile-d:#1B2027; --tile-s:#241C1E; --tile-o:#1E2228;
-  --good:#4ADE80; --good-soft:#12301E; --ok:#FBBF24; --ok-soft:#33270F; --low:#9CA3AF; --low-soft:#1F262F;
-  --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-lg:0 -8px 40px rgba(0,0,0,.6); color-scheme:dark}}
+  --bg:#15110E; --surface:#1E1915; --raised:#231D18; --ink:#F4ECDF; --ink-2:#D9CCBA; --muted:#9C8F80; --line:#362C23; --soft:#28211B;
+  --accent:#D9A066; --accent-ink:#1E1915; --accent-soft:#2E2419; --tile-f:#271F18; --tile-d:#241F1A; --tile-s:#28201D; --tile-o:#231F1B;
+  --good:#4ADE80; --good-soft:#12301E; --ok:#E3A55C; --ok-soft:#33270F; --low:#9C8F80; --low-soft:#28211B;
+  --star:#E3A55C; --mi:#F08A97; --accent2:#E3B07A;
+  --shadow:none; --shadow-lg:0 -8px 40px rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0B0F14; --surface:#141A21; --raised:#1A212A; --ink:#F3F4F6; --ink-2:#D1D5DB; --muted:#9CA3AF; --line:#262E38; --soft:#1C232C;
-  --accent:#FF6A4D; --accent-ink:#1A0D0A; --accent-soft:#3A1E18; --tile-f:#221E1B; --tile-d:#1B2027; --tile-s:#241C1E; --tile-o:#1E2228;
-  --good:#4ADE80; --good-soft:#12301E; --ok:#FBBF24; --ok-soft:#33270F; --low:#9CA3AF; --low-soft:#1F262F;
-  --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-lg:0 -8px 40px rgba(0,0,0,.6); color-scheme:dark}
+  --bg:#15110E; --surface:#1E1915; --raised:#231D18; --ink:#F4ECDF; --ink-2:#D9CCBA; --muted:#9C8F80; --line:#362C23; --soft:#28211B;
+  --accent:#D9A066; --accent-ink:#1E1915; --accent-soft:#2E2419; --tile-f:#271F18; --tile-d:#241F1A; --tile-s:#28201D; --tile-o:#231F1B;
+  --good:#4ADE80; --good-soft:#12301E; --ok:#E3A55C; --ok-soft:#33270F; --low:#9C8F80; --low-soft:#28211B;
+  --star:#E3A55C; --mi:#F08A97; --accent2:#E3B07A;
+  --shadow:none; --shadow-lg:0 -8px 40px rgba(0,0,0,.6); color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink)}
 body{font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
@@ -238,6 +241,23 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
   .sh-top .grab{visibility:hidden}
 }
 @media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+
+/* Style B: warm cream, Figtree, quiet tags */
+.appbar{background:color-mix(in srgb,var(--bg) 94%,transparent)!important}
+.card{box-shadow:none;border-radius:8px}
+.qchip,.search,select,.iconbtn,.acct,.act,.tile,.sh-stats,.fb-cta{border-radius:8px!important}
+.brand h1{font-weight:700;letter-spacing:-.01em}
+.brand .tagline{font-style:italic}
+.card h2{font-weight:600}
+.count{font-weight:600}
+.sh-head h2{font-weight:600}
+.rpill{background:transparent!important;color:var(--ink)!important;padding:0!important}
+.rpill svg{color:var(--star)}
+.mi{background:transparent!important;color:var(--mi)!important;box-shadow:inset 0 0 0 1px currentColor}
+.pick-badge{background:transparent!important;color:var(--accent2)!important;box-shadow:inset 0 0 0 1px currentColor!important}
+.brand .ctry{background:transparent!important;color:var(--accent2)!important;box-shadow:inset 0 0 0 1px currentColor!important}
+.act{background:transparent!important;box-shadow:inset 0 0 0 1px var(--line)}
+.act.primary{background:var(--accent)!important;color:var(--accent-ink)!important;box-shadow:none}
 </style>
 
 </head>
@@ -293,10 +313,10 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-name" hidden></div>
 
-<script src="art.js?v=6"></script>
-<script src="swipe.js?v=6"></script>
-<script src="search.js?v=6"></script>
-<script src="feedback.js?v=6"></script>
+<script src="art.js?v=7"></script>
+<script src="swipe.js?v=7"></script>
+<script src="search.js?v=7"></script>
+<script src="feedback.js?v=7"></script>
 <script>
 const $=s=>document.querySelector(s);
 const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
@@ -433,16 +453,14 @@ function card(p){
   const m=markOf(p);
   const where=p.a||p.r;
   const FL=friendsOf(p),fav_=FL.length?(FL.reduce((a,x)=>a+x.r,0)/FL.length):0;
-  const bits=[rpill(p)?`<span style="display:inline-flex;gap:5px;align-items:center">${rpill(p)}</span>`:'',FL.length?`<span class="fr-pill" title="Friends’ rating"><i>★</i>${fav_.toFixed(1)} · ${FL.length} ${FL.length>1?'friends':'friend'}</span>`:'',p.b?`<span class="price">${BUD(p.b)}<i>${'$'.repeat(5-p.b)}</i></span>`:'',`<span>${esc(where)}</span>`].filter(Boolean).join('<span class="dot"></span>');
+  const bits=[rpill(p)?`<span style="display:inline-flex;gap:5px;align-items:center">${rpill(p)}</span>`:'',p.b?`<span class="price">${BUD(p.b)}<i>${'$'.repeat(5-p.b)}</i></span>`:'',`<span>${esc(where)}</span>`].filter(Boolean).join('<span class="dot"></span>');
   return `<article class="card${p.cl==='perm'?' closed-card':''}" data-id="${p.id}" tabindex="0" role="button" aria-label="${esc(p.n)}">
     ${tile(p)}${m.visited?`<span class="been" title="Been there">${ICON.check}</span>`:''}
     <div class="body">
       <div class="ttl"><h2>${esc(p.n)}</h2></div>
       ${pickOf(p)||p.mi?`<div class="badges">${pickOf(p)?'<span class="pick-badge">Sida’s pick</span>':''}${mBadge(p)}</div>`:''}<div class="sub"><b>${esc(p.s)}</b> · ${esc(p.q)}</div>
-      ${p.k?`<div class="kf-line"><b>Known for</b>${esc([...(p.k.f||[]),...(p.k.d||[])].slice(0,3).join(', '))}</div>`:''}
       <div class="facts-row">${bits}</div>
       ${p.cl?`<div class="warn">${p.cl==='perm'?'Permanently closed':'Temporarily closed'}</div>`:''}${p.nf?`<div class="warn">Not found on Google Maps</div>`:''}
-      ${m.note?`<div class="mynote">${esc(m.note)}</div>`:''}
     </div>
     <button type="button" class="favbtn" data-act="fav" aria-pressed="${!!m.fav}" aria-label="Favourite" ${canWrite?'':'disabled'}>${ICON.heart}</button>
   </article>`;
@@ -563,7 +581,7 @@ window.__getLocal=()=>{try{return JSON.parse(localStorage.getItem(LKEY)||'{}')||
 document.addEventListener('click',e=>{if(e.target.closest('[data-signin]')){e.preventDefault();window.__signIn&&window.__signIn()}});
 </script>
 
-<script src="config.js?v=6"></script>
-<script type="module" src="sync.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script type="module" src="sync.js?v=7"></script>
 </body>
 </html>
