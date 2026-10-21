@@ -274,9 +274,9 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-name" hidden></div>
 
-<script src="art.js"></script>
-<script src="search.js"></script>
-<script src="feedback.js"></script>
+<script src="art.js?v=2"></script>
+<script src="search.js?v=2"></script>
+<script src="feedback.js?v=2"></script>
 <script>
 const $=s=>document.querySelector(s);
 const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
@@ -514,7 +514,7 @@ window.__getLocal=()=>{try{return JSON.parse(localStorage.getItem(LKEY)||'{}')||
 document.addEventListener('click',e=>{if(e.target.closest('[data-signin]')){e.preventDefault();window.__signIn&&window.__signIn()}});
 </script>
 
-<script src="config.js"></script>
-<script type="module" src="sync.js"></script>
+<script src="config.js?v=2"></script>
+<script type="module" src="sync.js?v=2"></script>
 </body>
 </html>
