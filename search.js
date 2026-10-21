@@ -148,7 +148,7 @@
     if (!Q.active) return 1;
     if (Q.price.length && !Q.price.some(([lo, hi]) => p.b >= lo && p.b <= hi)) return 0;
     const name = norm(p.n);
-    const kind = norm(`${p.q} ${p.gc || ''} ${p.s} ${p.c}`);
+    const kind = norm(`${p.q} ${p.gc || ''} ${p.s} ${p.c} ${p.k ? [...(p.k.f || []), ...(p.k.d || [])].join(' ') : ''}`);
     const rest = norm(`${p.a || ''} ${p.r || ''} ${p.ad || ''} ${note || ''}`);
     let total = 1;
     for (const { w, exp } of Q.words) {

@@ -133,6 +133,19 @@ select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);back
 .linkbtn[data-signin]{display:none}.has-auth .linkbtn[data-signin]{display:inline}
 .linkbtn{border:0;background:none;padding:0;font:inherit;color:var(--accent);font-weight:600;text-decoration:underline;cursor:pointer}
 .qhint{display:block;font-size:.78rem;font-weight:500;color:var(--muted);margin-top:2px}
+.kf-line{font-size:.78rem;color:var(--ink-2);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.kf-line b{font-weight:700;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;margin-right:4px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;justify-self:start;align-items:center}.badges .mi{margin:0}
+.pick-badge{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:800;color:#8A4F1C;background:#FBF1E1;box-shadow:inset 0 0 0 1px #EBD9BD;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.fr-pill{display:inline-flex;align-items:center;gap:4px;font-size:.78rem;font-weight:700;color:var(--ink-2)}.fr-pill i{font-style:normal;color:var(--ok)}
+.pick{margin-top:16px;background:#FBF1E1;border:1px solid #EBD9BD;border-radius:16px;padding:14px 16px}.pick-h{display:flex;align-items:center;justify-content:space-between;gap:10px}.pick-h .pick-badge{background:#fff}
+.pick .st{color:#B26A28;letter-spacing:1px;font-size:.95rem}.pick p{margin:8px 0 0;font-size:.92rem;line-height:1.45;color:#3E2A1A}
+.kf-chips{display:flex;flex-wrap:wrap;gap:8px}.kchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font:inherit;font-size:.84rem;font-weight:600;color:var(--ink);cursor:pointer}.kchip:hover{background:var(--soft)}.kchip svg{width:14px;height:14px;color:var(--muted)}
+.kf-src{margin:10px 0 0;font-size:.76rem;color:var(--muted)}.kf-src a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+.fr-sum{display:flex;align-items:center;gap:10px;margin-bottom:10px}.fr-sum b{font-size:1.05rem}.fr-sum b i{font-style:normal;color:var(--ok)}.fr-sum span{color:var(--muted);font-size:.84rem}
+.av-stack{display:flex}.av-stack .fav{margin-left:-6px;border:2px solid var(--surface)}.av-stack .fav:first-child{margin-left:0}
+.fav{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;display:inline-grid;place-items:center;overflow:hidden;flex:none}.fav img{width:100%;height:100%;object-fit:cover}
+.fr-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}.fr-list li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}.fr-list .who{display:flex;align-items:center;gap:8px;font-size:.86rem}.fr-list .who b{font-weight:700}.fr-list .st{color:var(--ok);font-size:.8rem;letter-spacing:1px}.fr-list p{margin:3px 0 0;font-size:.86rem;color:var(--ink-2);line-height:1.4}
+.share{display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:.84rem;color:var(--ink-2);cursor:pointer}.share input{margin-top:3px;accent-color:var(--accent)}
 .savehint{margin:-4px 0 10px;font-size:.76rem;color:var(--muted)}
 .warn{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
 .favbtn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--muted);display:grid;place-items:center}
@@ -274,9 +287,9 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-name" hidden></div>
 
-<script src="art.js?v=2"></script>
-<script src="search.js?v=2"></script>
-<script src="feedback.js?v=2"></script>
+<script src="art.js?v=3"></script>
+<script src="search.js?v=3"></script>
+<script src="feedback.js?v=3"></script>
 <script>
 const $=s=>document.querySelector(s);
 const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
@@ -412,12 +425,14 @@ function sorted(list){
 function card(p){
   const m=markOf(p);
   const where=p.a||p.r;
-  const bits=[rpill(p)?`<span style="display:inline-flex;gap:5px;align-items:center">${rpill(p)}</span>`:'',p.b?`<span class="price">${BUD(p.b)}<i>${'$'.repeat(5-p.b)}</i></span>`:'',`<span>${esc(where)}</span>`].filter(Boolean).join('<span class="dot"></span>');
+  const FL=friendsOf(p),fav_=FL.length?(FL.reduce((a,x)=>a+x.r,0)/FL.length):0;
+  const bits=[rpill(p)?`<span style="display:inline-flex;gap:5px;align-items:center">${rpill(p)}</span>`:'',FL.length?`<span class="fr-pill" title="Friends’ rating"><i>★</i>${fav_.toFixed(1)} · ${FL.length} ${FL.length>1?'friends':'friend'}</span>`:'',p.b?`<span class="price">${BUD(p.b)}<i>${'$'.repeat(5-p.b)}</i></span>`:'',`<span>${esc(where)}</span>`].filter(Boolean).join('<span class="dot"></span>');
   return `<article class="card${p.cl==='perm'?' closed-card':''}" data-id="${p.id}" tabindex="0" role="button" aria-label="${esc(p.n)}">
     ${tile(p)}${m.visited?`<span class="been" title="Been there">${ICON.check}</span>`:''}
     <div class="body">
       <div class="ttl"><h2>${esc(p.n)}</h2></div>
-      ${mBadge(p)}<div class="sub"><b>${esc(p.s)}</b> · ${esc(p.q)}</div>
+      ${pickOf(p)||p.mi?`<div class="badges">${pickOf(p)?'<span class="pick-badge">Sida’s pick</span>':''}${mBadge(p)}</div>`:''}<div class="sub"><b>${esc(p.s)}</b> · ${esc(p.q)}</div>
+      ${p.k?`<div class="kf-line"><b>Known for</b>${esc([...(p.k.f||[]),...(p.k.d||[])].slice(0,3).join(', '))}</div>`:''}
       <div class="facts-row">${bits}</div>
       ${p.cl?`<div class="warn">${p.cl==='perm'?'Permanently closed':'Temporarily closed'}</div>`:''}${p.nf?`<div class="warn">Not found on Google Maps</div>`:''}
       ${m.note?`<div class="mynote">${esc(m.note)}</div>`:''}
@@ -429,7 +444,7 @@ function render(){
   renderFilters();
   const list=sorted(PLACES.filter(p=>passes(p)));
   const Qh=query(),rel=(Qh.related||[]).slice(0,4);
-  $('#count').innerHTML=`${list.length.toLocaleString()} places<span>of ${PLACES.length.toLocaleString()} saved</span>`+(Qh.active&&rel.length?`<small class="qhint">Including ${esc(rel.join(', '))} places</small>`:'');
+  $('#count').innerHTML=`${list.length.toLocaleString()} ${list.length===1?'place':'places'}<span>of ${PLACES.length.toLocaleString()} saved</span>`+(Qh.active&&rel.length?`<small class="qhint">Including ${esc(rel.join(', '))} places</small>`:'');
   $('#grid').innerHTML=list.length?list.slice(0,shown).map(card).join(''):'<div class="empty"><b>No places match</b>Try removing a filter or searching for something else.</div>';
   $('#more').hidden=list.length<=shown;
   $('#moreBtn').textContent=`Show ${Math.min(60,list.length-shown)} more`;
@@ -439,7 +454,24 @@ async function saveMark(id,patch){
   MARKS[id]=next;render();refreshSheet();
   saveLocal();
   if(MODE==='cloud'&&window.__cloudSave){try{await window.__cloudSave(id,next)}catch(e){console.warn('save failed',e)}}
+  if(MODE==='cloud'&&window.__publishReview){try{await window.__publishReview(id,next)}catch(e){console.warn('share failed',e)}}
 }
+let REV={};
+window.__setReviews=map=>{REV=map||{};if(PLACES.length){render();refreshSheet()}};
+const revOf=p=>REV[p.id]||[];
+const pickOf=p=>revOf(p).find(x=>x.pick);
+const friendsOf=p=>revOf(p).filter(x=>!x.pick);
+const starStr=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+function favHTML(x){const i=esc(((x.name||'?').trim()[0]||'?').toUpperCase());return `<span class="fav">${x.photo?`<img src="${esc(x.photo)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:i}</span>`}
+const DISH_I='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M17 3c-1.7 1.3-2.5 3.6-2.5 6.5V13h2.5v8"/></svg>';
+const DRINK_I='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 4h14l-7 8zM12 12v8M8 20h8"/></svg>';
+function knownHTML(p){if(!p.k)return'';const ch=[...(p.k.f||[]).map(x=>[x,DISH_I]),...(p.k.d||[]).map(x=>[x,DRINK_I])];
+  return `<div class="sec"><h3>Known for</h3><div class="kf-chips">${ch.map(([x,ic])=>`<button type="button" class="kchip" data-dish="${esc(x)}">${ic}${esc(x)}</button>`).join('')}</div>
+  <p class="kf-src">From ${(p.k.s||[]).map(([n,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join(', ')}</p></div>`}
+function pickHTML(p){const k=pickOf(p);if(!k)return'';return `<div class="pick"><div class="pick-h"><span class="pick-badge">Sida’s pick</span><span class="st" aria-label="${k.r} of 5">${starStr(k.r)}</span></div>${k.t?`<p>${esc(k.t)}</p>`:''}</div>`}
+function friendsHTML(p){const L=friendsOf(p);if(!L.length)return'';const avg=L.reduce((a,x)=>a+x.r,0)/L.length;
+  return `<div class="sec"><h3>Friends’ ratings</h3><div class="fr-sum"><b><i>★</i> ${avg.toFixed(1)}</b><span>from ${L.length} ${L.length>1?'friends':'friend'}</span><span class="av-stack">${L.slice(0,5).map(favHTML).join('')}</span></div>
+  <ul class="fr-list">${L.map(x=>`<li>${favHTML(x)}<div><div class="who"><b>${esc(x.name||'Someone')}</b><span class="st">${starStr(x.r)}</span></div>${x.t?`<p>${esc(x.t)}</p>`:''}</div></li>`).join('')}</ul></div>`}
 function sheetHTML(p){
   const m=markOf(p),r=m.rating||0,q=`${p.n} Singapore`;
   const stars=[1,2,3,4,5].map(i=>`<button type="button" class="${i<=r?'on':''}" data-act="rate" data-v="${i}" aria-label="Rate ${i} of 5" ${canWrite?'':'disabled'}>${ICON.star}</button>`).join('');
@@ -457,6 +489,7 @@ function sheetHTML(p){
       <a class="act" href="https://www.google.com/search?tbm=isch&q=${enc(q)}" target="_blank" rel="noopener">${ICON.image}See the vibe</a>
       <a class="act" href="${p.ig?`https://www.instagram.com/${enc(p.ig)}/`:`https://www.google.com/search?btnI=1&q=${enc(p.n+' Singapore site:instagram.com')}`}" target="_blank" rel="noopener">${ICON.insta}Instagram</a>
     </div>
+    ${pickHTML(p)}${knownHTML(p)}${friendsHTML(p)}
     <div class="info">
       <div class="info-row">${ICON.pin}<div>${esc(p.a||p.r)}${p.ad?`<small>${esc(p.ad)}</small>`:''}</div></div>
       <div class="info-row">${ICON.tag}<div>${esc(p.gc||p.c)}<small>Category on Google Maps</small></div></div>
@@ -471,6 +504,7 @@ function sheetHTML(p){
         <span class="stars" aria-label="Your rating">${stars}</span>
       </div>
       ${canWrite?`<textarea id="sh-note" placeholder="Add a note, e.g. what to order or who to go with">${esc(m.note||'')}</textarea><div class="note-row"><span class="saved" id="sh-saved" hidden>Saved</span><button type="button" class="btn" data-act="note">Save note</button></div>`:(m.note?`<div class="mynote">${esc(m.note)}</div>`:'')}
+      ${MODE==='cloud'&&window.__publishReview?`<label class="share"><input type="checkbox" data-share ${m.pub?'checked':''}><span>${window.__isOwner?'Show my rating &amp; note to everyone as <b>Sida’s pick</b>':'Share my rating &amp; note with others (shows your name and photo)'}</span></label>`:''}
     </div>
     <div class="sec"><button type="button" class="fb-link" data-fb="feedback" data-place="${esc(p.n)}">Send feedback on this place</button></div>
   </div>`;
@@ -480,7 +514,9 @@ function closeSheet(){sheetId=null;$('#sheet').hidden=true;$('#scrim').hidden=tr
 function refreshSheet(){if(!sheetId)return;const p=PLACES.find(x=>x.id===sheetId);if(!p)return;const t=document.getElementById('sh-note');const draft=t&&t.value;const top=$('#sheet').scrollTop;$('#sheet').innerHTML=sheetHTML(p);const t2=document.getElementById('sh-note');if(t2&&draft!=null&&document.activeElement!==t2)t2.value=draft;$('#sheet').scrollTop=top}
 $('#scrim').onclick=()=>{closeSheet();$('#rail').classList.remove('open')};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(sheetId)closeSheet();else $('#rail').classList.remove('open'),$('#scrim').hidden=true}});
+$('#sheet').addEventListener('change',e=>{const c=e.target.closest('input[data-share]');if(c)saveMark(sheetId,{pub:c.checked})});
 $('#sheet').addEventListener('click',e=>{
+  const kc=e.target.closest('[data-dish]');if(kc){$('#q').value=kc.dataset.dish;closeSheet();shown=60;render();window.scrollTo({top:0,behavior:'smooth'});return}
   const b=e.target.closest('button[data-act]');if(!b)return;
   const id=sheetId,m=MARKS[id]||{},act=b.dataset.act;
   if(act==='close')closeSheet();
@@ -514,7 +550,7 @@ window.__getLocal=()=>{try{return JSON.parse(localStorage.getItem(LKEY)||'{}')||
 document.addEventListener('click',e=>{if(e.target.closest('[data-signin]')){e.preventDefault();window.__signIn&&window.__signIn()}});
 </script>
 
-<script src="config.js?v=2"></script>
-<script type="module" src="sync.js?v=2"></script>
+<script src="config.js?v=3"></script>
+<script type="module" src="sync.js?v=3"></script>
 </body>
 </html>

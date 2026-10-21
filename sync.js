@@ -8,13 +8,27 @@ if (cfg && cfg.apiKey && !cfg.apiKey.startsWith('PASTE')) {
   const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
   const { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } =
     await import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`);
-  const { getFirestore, collection, doc, setDoc, onSnapshot, writeBatch } =
+  const { getFirestore, collection, collectionGroup, doc, setDoc, deleteDoc, onSnapshot, writeBatch, serverTimestamp } =
     await import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`);
 
   const app = initializeApp(cfg);
   const auth = getAuth(app);
   const db = getFirestore(app);
   let unsub = null;
+  const OWNER = 'sidaaaaaaa111@gmail.com';
+
+  // Everyone's shared ratings (public): places/{placeId}/ratings/{uid}
+  onSnapshot(collectionGroup(db, 'ratings'), snap => {
+    const map = {};
+    snap.forEach(d => {
+      const pid = d.ref.parent.parent && d.ref.parent.parent.id;
+      const x = d.data();
+      if (!pid || !(x.r >= 1 && x.r <= 5)) return;
+      (map[pid] = map[pid] || []).push({ uid: d.id, r: x.r, t: x.t || '', name: x.name || '', photo: x.photo || '', pick: !!x.pick, at: x.at ? x.at.toMillis() : 0 });
+    });
+    for (const k in map) map[k].sort((a, b) => b.at - a.at);
+    window.__setReviews && window.__setReviews(map);
+  }, err => console.warn('ratings unavailable', err));
 
   window.__signIn = async () => {
     try { await signInWithPopup(auth, new GoogleAuthProvider()); }
@@ -52,6 +66,8 @@ if (cfg && cfg.apiKey && !cfg.apiKey.startsWith('PASTE')) {
       btn.classList.remove('signed');
       window.__cloudSave = null;
       window.__sidalogUser = null;
+      window.__publishReview = null;
+      window.__isOwner = false;
       window.__setCloud(false);
       return;
     }
@@ -71,6 +87,22 @@ if (cfg && cfg.apiKey && !cfg.apiKey.startsWith('PASTE')) {
     btn.setAttribute('aria-label', 'Account');
     btn.classList.add('signed');
     window.__sidalogUser = { name: user.displayName || '', email: user.email || '' };
+    window.__isOwner = !!(user.email && user.email.toLowerCase() === OWNER && user.emailVerified);
+    window.__publishReview = async (placeId, m) => {
+      const ref = doc(db, 'places', placeId, 'ratings', user.uid);
+      if (m.pub && m.rating >= 1) {
+        await setDoc(ref, {
+          r: m.rating,
+          t: (m.note || '').slice(0, 600),
+          name: (user.displayName || 'Someone').slice(0, 80),
+          photo: (user.photoURL || '').slice(0, 500),
+          pick: window.__isOwner,
+          at: serverTimestamp(),
+        });
+      } else {
+        await deleteDoc(ref).catch(() => {});
+      }
+    };
 
     const col = collection(db, 'users', user.uid, 'marks');
     window.__cloudSave = (id, data) => setDoc(doc(col, id), data);

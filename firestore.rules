@@ -1,9 +1,28 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Each signed-in person can read and write only their own marks.
+    // Each signed-in person can read and write only their own private marks.
     match /users/{uid}/marks/{placeId} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    // Shared ratings: anyone can read; each person writes only their own;
+    // only Sida's account can mark a rating as "Sida's pick".
+    match /places/{placeId}/ratings/{uid} {
+      allow read: if true;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['r', 't', 'name', 'photo', 'pick', 'at'])
+        && request.resource.data.r is int && request.resource.data.r >= 1 && request.resource.data.r <= 5
+        && request.resource.data.t is string && request.resource.data.t.size() <= 600
+        && request.resource.data.name is string && request.resource.data.name.size() <= 80
+        && request.resource.data.photo is string && request.resource.data.photo.size() <= 500
+        && request.resource.data.pick is bool
+        && (request.resource.data.pick == false
+            || (request.auth.token.email == 'sidaaaaaaa111@gmail.com' && request.auth.token.email_verified == true));
+    }
+    // Lets the app load all shared ratings in one query.
+    match /{path=**}/ratings/{uid} {
+      allow read: if true;
     }
   }
 }
