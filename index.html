@@ -165,7 +165,11 @@ select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);back
 .scrim{position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:30;backdrop-filter:blur(2px)}
 .sheet{position:fixed;z-index:31;left:50%;bottom:0;transform:translateX(-50%);width:min(600px,100%);max-height:90vh;overflow:auto;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:var(--shadow-lg);padding:0 0 calc(env(safe-area-inset-bottom,0px) + 20px)}
 .sh-top{position:sticky;top:0;z-index:2;display:flex;justify-content:center;padding:10px 0 4px;background:var(--surface)}
-.grab{width:40px;height:5px;border-radius:3px;background:var(--line)}
+.grab{width:44px;height:5px;border-radius:3px;background:var(--line)}
+.sh-top{touch-action:none;cursor:grab}
+@media (max-width:999px){.sheet:not([hidden]){animation:sheetIn .24s cubic-bezier(.2,.8,.2,1)}}
+@media (max-width:860px){aside.open{animation:sheetIn .24s cubic-bezier(.2,.8,.2,1)}}
+@keyframes sheetIn{from{translate:0 100%}to{translate:0 0}}
 .sh-x{position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:10px;width:34px;height:34px;border-radius:50%;border:0;background:var(--soft);display:grid;place-items:center}
 .sh-in{padding:6px max(22px,env(safe-area-inset-right,0px)) 0 max(22px,env(safe-area-inset-left,0px));display:grid;gap:18px}
 .sh-head{display:grid;grid-template-columns:88px minmax(0,1fr);gap:16px;align-items:center}
@@ -287,9 +291,10 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-name" hidden></div>
 
-<script src="art.js?v=4"></script>
-<script src="search.js?v=4"></script>
-<script src="feedback.js?v=4"></script>
+<script src="art.js?v=5"></script>
+<script src="swipe.js?v=5"></script>
+<script src="search.js?v=5"></script>
+<script src="feedback.js?v=5"></script>
 <script>
 const $=s=>document.querySelector(s);
 const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
@@ -509,10 +514,13 @@ function sheetHTML(p){
     <div class="sec"><button type="button" class="fb-link" data-fb="feedback" data-place="${esc(p.n)}">Send feedback on this place</button></div>
   </div>`;
 }
-function openSheet(id){sheetId=id;const p=PLACES.find(x=>x.id===id);if(!p)return;const s=$('#sheet');s.innerHTML=sheetHTML(p);s.hidden=false;$('#scrim').hidden=false;s.scrollTop=0;s.querySelector('.sh-x').focus()}
-function closeSheet(){sheetId=null;$('#sheet').hidden=true;$('#scrim').hidden=true}
+function openSheet(id){const was=sheetId;sheetId=id;const p=PLACES.find(x=>x.id===id);if(!p)return;const s=$('#sheet');s.innerHTML=sheetHTML(p);s.hidden=false;$('#scrim').hidden=false;s.scrollTop=0;s.querySelector('.sh-x').focus({preventScroll:true});
+  try{if(!was&&!(history.state&&history.state.sheet))history.pushState({sheet:id},'')}catch(e){}}
+function closeSheet(fromBack){if(!sheetId)return;sheetId=null;$('#sheet').hidden=true;if(!$('#rail').classList.contains('open'))$('#scrim').hidden=true;
+  try{if(!fromBack&&history.state&&history.state.sheet)history.back()}catch(e){}}
+window.addEventListener('popstate',()=>{if(sheetId)closeSheet(true)});
 function refreshSheet(){if(!sheetId)return;const p=PLACES.find(x=>x.id===sheetId);if(!p)return;const t=document.getElementById('sh-note');const draft=t&&t.value;const top=$('#sheet').scrollTop;$('#sheet').innerHTML=sheetHTML(p);const t2=document.getElementById('sh-note');if(t2&&draft!=null&&document.activeElement!==t2)t2.value=draft;$('#sheet').scrollTop=top}
-$('#scrim').onclick=()=>{closeSheet();$('#rail').classList.remove('open')};
+$('#scrim').onclick=()=>{closeSheet();$('#rail').classList.remove('open');$('#scrim').hidden=true};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(sheetId)closeSheet();else $('#rail').classList.remove('open'),$('#scrim').hidden=true}});
 $('#sheet').addEventListener('change',e=>{const c=e.target.closest('input[data-share]');if(c)saveMark(sheetId,{pub:c.checked})});
 $('#sheet').addEventListener('click',e=>{
@@ -539,6 +547,10 @@ document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{expanded[b.da
 $('#clearAll').onclick=clearAll;
 $('#openF').onclick=()=>{$('#rail').classList.add('open');$('#scrim').hidden=false};
 $('#closeF').onclick=()=>{$('#rail').classList.remove('open');if(!sheetId)$('#scrim').hidden=true};
+if(window.SidalogSwipe){
+  SidalogSwipe.attach($('#sheet'),{isOpen:()=>!!sheetId,when:SidalogSwipe.MOBILE,handle:'.sh-top',onClose:()=>closeSheet()});
+  SidalogSwipe.attach($('#rail'),{isOpen:()=>$('#rail').classList.contains('open'),when:()=>matchMedia('(max-width:860px)').matches,handle:'.drawer-head',onClose:()=>$('#closeF').click()});
+}
 try{const s=localStorage.getItem('sp-sort');if(s&&[...$('#sort').options].some(o=>o.value===s))$('#sort').value=s}catch(e){}
 
 fetch('places.json').then(r=>r.json()).then(d=>{PLACES=d.places;render()})
@@ -549,7 +561,7 @@ window.__getLocal=()=>{try{return JSON.parse(localStorage.getItem(LKEY)||'{}')||
 document.addEventListener('click',e=>{if(e.target.closest('[data-signin]')){e.preventDefault();window.__signIn&&window.__signIn()}});
 </script>
 
-<script src="config.js?v=4"></script>
-<script type="module" src="sync.js?v=4"></script>
+<script src="config.js?v=5"></script>
+<script type="module" src="sync.js?v=5"></script>
 </body>
 </html>
