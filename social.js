@@ -40,22 +40,25 @@ export function initSocial(fb) {
     rerender();
   }
 
-  function addHTML(p) {
-    if (!me()) return `<p class="ph-hint"><button type="button" class="linkbtn" data-signin>Sign in</button> to add your food &amp; vibe photos</p>`;
+  // "Add photos" lives inside the Your notes section
+  window.__photoAddHTML = p => {
+    if (!me()) return '';
+    if (!PH[p.id]) loadPhotos(p.id);
     const mine = (PH[p.id] || []).filter(x => x.uid === me().uid).length;
     const left = MAX_PER_PERSON - mine;
     return `<div class="ph-add">
       <label class="btn ghost${left > 0 ? '' : ' off'}"><input type="file" accept="image/*" multiple data-phfile ${left > 0 ? '' : 'disabled'} hidden>
       <svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>${left > 0 ? 'Add photos' : 'Photo limit reached'}</label>
-      <span class="ph-note" id="ph-status">${left > 0 ? `Up to ${left} more · everyone can see them` : 'Delete one of yours to add another'}</span></div>`;
-  }
+      <span class="ph-note" id="ph-status">${left > 0 ? `Food &amp; vibe photos · up to ${left} more · everyone can see them` : 'Delete one of your photos to add another'}</span></div>`;
+  };
+  // the photo strip near the top of a place
   window.__photosHTML = p => {
     if (!PH[p.id]) loadPhotos(p.id);
     const L = PH[p.id] || [];
-    if (!L.length && !me()) return '';
-    return `<div class="sec ph-sec"><h3>Food &amp; vibes</h3>${L.length ? `<div class="ph-strip">${L.map((x, i) =>
-      `<button type="button" class="ph" data-ph="${i}" aria-label="Photo by ${esc(x.name || 'someone')}"><img src="${x.t}" alt=""></button>`).join('')}</div>` : '<p class="ph-note" style="margin-top:0">No photos yet. Be the first to share the food or the vibe.</p>'}
-      ${addHTML(p)}</div>`;
+    if (!L.length) return '';
+    return `<div class="sec ph-sec"><h3>Food &amp; vibes</h3><div class="ph-strip">${L.map((x, i) =>
+      `<button type="button" class="ph" data-ph="${i}" aria-label="Photo by ${esc(x.name || 'someone')}"><img src="${x.t}" alt=""></button>`).join('')}</div>
+      <p class="kf-src">Photos from Sida &amp; friends</p></div>`;
   };
 
   // shrink a photo on the phone before upload
@@ -277,7 +280,7 @@ function injectCSS() {
   .ph-strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;margin:0 -2px}
   .ph{flex:none;width:132px;height:132px;border:0;padding:0;border-radius:8px;overflow:hidden;background:var(--soft);scroll-snap-align:start}
   .ph img{width:100%;height:100%;object-fit:cover;display:block}
-  .ph-add{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .ph-add{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.ph-add .ph-note{margin:0;flex:1;min-width:160px}
   .ph-add .btn{display:inline-flex;align-items:center;gap:6px;cursor:pointer}.ph-add .btn svg{width:16px;height:16px}
   .ph-add .btn.off{opacity:.5;cursor:default}
   .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
