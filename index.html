@@ -269,7 +269,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
 
 <script>
 /* auto-update: if a newer sidalog is published, reload once to get it (phones cache the page) */
-(function(){var V='12';try{fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='13';try{fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var k='sl-upd-'+t;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}location.replace(location.pathname+'?v='+t+location.hash)}}).catch(function(){})}catch(e){}})();
 </script>
 </head>
@@ -325,10 +325,10 @@ if(t&&t!==V){var k='sl-upd-'+t;try{if(sessionStorage.getItem(k))return;sessionSt
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-name" hidden></div>
 
-<script src="art.js?v=12"></script>
-<script src="swipe.js?v=12"></script>
-<script src="search.js?v=12"></script>
-<script src="feedback.js?v=12"></script>
+<script src="art.js?v=13"></script>
+<script src="swipe.js?v=13"></script>
+<script src="search.js?v=13"></script>
+<script src="feedback.js?v=13"></script>
 <script>
 const $=s=>document.querySelector(s);
 const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
@@ -599,8 +599,8 @@ window.__getLocal=()=>{try{return JSON.parse(localStorage.getItem(LKEY)||'{}')||
 document.addEventListener('click',e=>{if(e.target.closest('[data-signin]')){e.preventDefault();window.__signIn&&window.__signIn()}});
 </script>
 
-<script src="config.js?v=12"></script>
-<script type="module" src="sync.js?v=12"></script>
+<script src="config.js?v=13"></script>
+<script type="module" src="sync.js?v=13"></script>
 <script>
 (function(){const q=document.getElementById('q'),x=document.getElementById('qx');if(!q||!x)return;
 const sync=()=>{x.hidden=!q.value};q.addEventListener('input',sync);
