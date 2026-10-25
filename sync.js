@@ -16,7 +16,7 @@ if (cfg && cfg.apiKey && !cfg.apiKey.startsWith('PASTE')) {
   const db = getFirestore(app);
   let unsub = null;
   try {
-    const { initSocial } = await import('./social.js?v=9');
+    const { initSocial } = await import('./social.js?v=10');
     initSocial({ db, auth, collection, doc, setDoc, addDoc, getDoc, getDocs, deleteDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp });
   } catch (e) { console.warn('social features unavailable', e); }
   const OWNER = 'sidaaaaaaa111@gmail.com';

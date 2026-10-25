@@ -289,7 +289,7 @@ function injectCSS() {
   .ph-bar button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:999px;padding:8px 12px;font:inherit;font-size:.82rem}
   .ph-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:50%;width:40px;height:40px;font-size:1.4rem}
   .ph-nav.prev{left:10px}.ph-nav.next{right:10px}
-  .inbox-btn{position:relative}.inbox-btn .dotn{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:.66rem;font-weight:800;display:grid;place-items:center;padding:0 4px}
+  .inbox-btn{position:relative}.inbox-btn[hidden]{display:none!important}.inbox-btn .dotn{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:.66rem;font-weight:800;display:grid;place-items:center;padding:0 4px}
   .inbox-btn .dotn[hidden]{display:none}
   .ibx{max-height:92vh}
   .ibx-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.ibx-h h2{margin:0}.ibx .sh-x{position:static;flex:none}
