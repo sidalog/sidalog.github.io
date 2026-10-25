@@ -277,7 +277,7 @@ function injectCSS() {
   const s = document.createElement('style');
   s.textContent = `
   .tile.has-ph{padding:0;overflow:hidden}.tile.has-ph img{width:100%;height:100%;object-fit:cover;display:block}
-  .ph-strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;margin:0 -2px}
+  .ph-strip{max-width:100%;min-width:0;display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;margin:0 -2px}
   .ph{flex:none;width:132px;height:132px;border:0;padding:0;border-radius:8px;overflow:hidden;background:var(--soft);scroll-snap-align:start}
   .ph img{width:100%;height:100%;object-fit:cover;display:block}
   .ph-add{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.ph-add .ph-note{margin:0;flex:1;min-width:160px}

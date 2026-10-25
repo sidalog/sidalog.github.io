@@ -176,7 +176,7 @@ select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);back
 @media (max-width:860px){aside.open{animation:sheetIn .24s cubic-bezier(.2,.8,.2,1)}}
 @keyframes sheetIn{from{translate:0 100%}to{translate:0 0}}
 .sh-x{position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:10px;width:34px;height:34px;border-radius:50%;border:0;background:var(--soft);display:grid;place-items:center}
-.sh-in{padding:6px max(22px,env(safe-area-inset-right,0px)) 0 max(22px,env(safe-area-inset-left,0px));display:grid;gap:18px}
+.sh-in{padding:6px max(22px,env(safe-area-inset-right,0px)) 0 max(22px,env(safe-area-inset-left,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px}.sh-in>*{min-width:0}.sheet{overflow-x:hidden}
 .sh-head{display:grid;grid-template-columns:88px minmax(0,1fr);gap:16px;align-items:center}
 .sh-head .tile{width:88px;height:88px;border-radius:20px}
 .sh-head h2{margin:0;font-size:1.4rem;font-weight:800;letter-spacing:-.02em;line-height:1.2;overflow-wrap:anywhere;text-wrap:balance}
@@ -320,10 +320,10 @@ textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-name" hidden></div>
 
-<script src="art.js?v=11"></script>
-<script src="swipe.js?v=11"></script>
-<script src="search.js?v=11"></script>
-<script src="feedback.js?v=11"></script>
+<script src="art.js?v=12"></script>
+<script src="swipe.js?v=12"></script>
+<script src="search.js?v=12"></script>
+<script src="feedback.js?v=12"></script>
 <script>
 const $=s=>document.querySelector(s);
 const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
@@ -594,8 +594,8 @@ window.__getLocal=()=>{try{return JSON.parse(localStorage.getItem(LKEY)||'{}')||
 document.addEventListener('click',e=>{if(e.target.closest('[data-signin]')){e.preventDefault();window.__signIn&&window.__signIn()}});
 </script>
 
-<script src="config.js?v=11"></script>
-<script type="module" src="sync.js?v=11"></script>
+<script src="config.js?v=12"></script>
+<script type="module" src="sync.js?v=12"></script>
 <script>
 (function(){const q=document.getElementById('q'),x=document.getElementById('qx');if(!q||!x)return;
 const sync=()=>{x.hidden=!q.value};q.addEventListener('input',sync);
