@@ -11,6 +11,8 @@ export function initSocial(fb) {
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const me = () => auth.currentUser;
   const isOwner = () => !!(me() && me().email && me().email.toLowerCase() === OWNER && me().emailVerified);
+  // only ever render genuine JPEG data URLs (stops anything else being injected into the page)
+  const okImg = t => typeof t === 'string' && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(t) ? t : '';
   const rerender = () => window.__rerender && window.__rerender();
 
   injectCSS();
@@ -22,7 +24,7 @@ export function initSocial(fb) {
     snap.docChanges().forEach(c => { if (c.type === 'removed') delete COVERS[c.doc.id]; });
     rerender();
   }, () => {});
-  window.__coverOf = id => (COVERS[id] && COVERS[id].t) || '';
+  window.__coverOf = id => okImg(COVERS[id] && COVERS[id].t);
 
   // ---------- photos per place, loaded when a place is opened ----------
   const PH = {};           // pid -> [{id, uid, name, t, at}]
@@ -32,7 +34,7 @@ export function initSocial(fb) {
     loading.add(pid);
     try {
       const s = await getDocs(query(collection(db, 'photos'), where('pid', '==', pid)));
-      PH[pid] = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.at?.toMillis?.() || 0) - (a.at?.toMillis?.() || 0));
+      PH[pid] = s.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => okImg(x.t)).sort((a, b) => (b.at?.toMillis?.() || 0) - (a.at?.toMillis?.() || 0));
     } catch (e) { console.warn('photos unavailable', e); PH[pid] = PH[pid] || []; }
     loading.delete(pid);
     rerender();
@@ -123,7 +125,7 @@ export function initSocial(fb) {
       const can = me() && (x.uid === me().uid || isOwner());
       box.innerHTML = `<div class="ph-bar"><span>${esc(x.name || 'Someone')}</span>${can ? '<button type="button" data-del>Delete</button>' : ''}<button type="button" data-close aria-label="Close">✕</button></div>
         <img src="${x.t}" alt="">${L.length > 1 ? '<button type="button" class="ph-nav prev" data-prev aria-label="Previous">‹</button><button type="button" class="ph-nav next" data-next aria-label="Next">›</button>' : ''}`;
-      try { const d = (await getDoc(doc(db, 'photoFull', x.id))).data(); if (d && d.d && L[i] === x) box.querySelector('img').src = d.d; } catch (e) {}
+      try { const d = (await getDoc(doc(db, 'photoFull', x.id))).data(); if (d && okImg(d.d) && L[i] === x) box.querySelector('img').src = d.d; } catch (e) {}
     };
     box.addEventListener('click', async e => {
       if (e.target.closest('[data-close]') || e.target === box) box.remove();

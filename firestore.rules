@@ -38,16 +38,14 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['pid', 'uid', 'name', 't', 'at'])
         && request.resource.data.pid is string && request.resource.data.pid.size() <= 40
         && request.resource.data.name is string && request.resource.data.name.size() <= 80
-        && request.resource.data.t is string && request.resource.data.t.size() <= 120000
-        && request.resource.data.t.matches('^data:image/jpeg;base64,.*');
+        && request.resource.data.t is string && request.resource.data.t.size() <= 120000;
       allow delete: if signedIn() && (resource.data.uid == request.auth.uid || isSida());
     }
     match /photoFull/{id} {
       allow read: if true;
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid
         && request.resource.data.keys().hasOnly(['uid', 'pid', 'd'])
-        && request.resource.data.d is string && request.resource.data.d.size() <= 900000
-        && request.resource.data.d.matches('^data:image/jpeg;base64,.*');
+        && request.resource.data.d is string && request.resource.data.d.size() <= 900000;
       allow delete: if signedIn() && (resource.data.uid == request.auth.uid || isSida());
     }
     // One small cover photo per place for the list.
@@ -57,7 +55,6 @@ service cloud.firestore {
         && (request.resource == null || (
           request.resource.data.keys().hasOnly(['t', 'uid', 'own', 'ph', 'at'])
           && request.resource.data.t is string && request.resource.data.t.size() <= 60000
-          && request.resource.data.t.matches('^data:image/jpeg;base64,.*')
           && (request.resource.data.own == false || isSida())));
     }
 
