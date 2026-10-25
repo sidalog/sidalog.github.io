@@ -8,13 +8,17 @@ if (cfg && cfg.apiKey && !cfg.apiKey.startsWith('PASTE')) {
   const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
   const { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } =
     await import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`);
-  const { getFirestore, collection, collectionGroup, doc, setDoc, deleteDoc, onSnapshot, writeBatch, serverTimestamp } =
+  const { getFirestore, collection, collectionGroup, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, writeBatch, serverTimestamp, query, where, orderBy } =
     await import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`);
 
   const app = initializeApp(cfg);
   const auth = getAuth(app);
   const db = getFirestore(app);
   let unsub = null;
+  try {
+    const { initSocial } = await import('./social.js?v=9');
+    initSocial({ db, auth, collection, doc, setDoc, addDoc, getDoc, getDocs, deleteDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp });
+  } catch (e) { console.warn('social features unavailable', e); }
   const OWNER = 'sidaaaaaaa111@gmail.com';
 
   // Everyone's shared ratings (public): places/{placeId}/ratings/{uid}

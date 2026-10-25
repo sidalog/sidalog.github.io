@@ -108,7 +108,9 @@
           Page: location.href,
         };
         // Apps Script web app: plain-text POST avoids a CORS preflight; the response is opaque.
+        const saved = window.__saveFeedback ? window.__saveFeedback(body).catch(e => console.warn('feedback not stored', e)) : null;
         await fetch(C.endpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+        await saved;
         box.innerHTML = '';
         const done = el('div', { class: 'fb-done' });
         done.append(el('b', { text: 'Thank you!' }), el('span', { text: isFb ? 'Your feedback is on its way to Sida.' : 'Your suggestion is on its way to Sida.' }));

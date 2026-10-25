@@ -24,5 +24,60 @@ service cloud.firestore {
     match /{path=**}/ratings/{uid} {
       allow read: if true;
     }
+
+    // ---- helpers ----
+    function signedIn() { return request.auth != null; }
+    function isSida() {
+      return signedIn() && request.auth.token.email == 'sidaaaaaaa111@gmail.com' && request.auth.token.email_verified == true;
+    }
+
+    // Review photos: anyone can see; signed-in people add their own; owner of the photo or Sida can delete.
+    match /photos/{id} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['pid', 'uid', 'name', 't', 'at'])
+        && request.resource.data.pid is string && request.resource.data.pid.size() <= 40
+        && request.resource.data.name is string && request.resource.data.name.size() <= 80
+        && request.resource.data.t is string && request.resource.data.t.size() <= 120000
+        && request.resource.data.t.matches('^data:image/jpeg;base64,.*');
+      allow delete: if signedIn() && (resource.data.uid == request.auth.uid || isSida());
+    }
+    match /photoFull/{id} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'pid', 'd'])
+        && request.resource.data.d is string && request.resource.data.d.size() <= 900000
+        && request.resource.data.d.matches('^data:image/jpeg;base64,.*');
+      allow delete: if signedIn() && (resource.data.uid == request.auth.uid || isSida());
+    }
+    // One small cover photo per place for the list.
+    match /covers/{pid} {
+      allow read: if true;
+      allow write: if signedIn()
+        && (request.resource == null || (
+          request.resource.data.keys().hasOnly(['t', 'uid', 'own', 'ph', 'at'])
+          && request.resource.data.t is string && request.resource.data.t.size() <= 60000
+          && request.resource.data.t.matches('^data:image/jpeg;base64,.*')
+          && (request.resource.data.own == false || isSida())));
+    }
+
+    // "Suggest a place" and feedback: anyone can send; only Sida can read or manage.
+    match /feedback/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['kind', 'place', 'where', 'msg', 'from', 'email', 'uid', 'status', 'at'])
+        && request.resource.data.kind in ['suggest', 'feedback']
+        && request.resource.data.status == 'new'
+        && request.resource.data.place is string && request.resource.data.place.size() <= 200
+        && request.resource.data.where is string && request.resource.data.where.size() <= 500
+        && request.resource.data.msg is string && request.resource.data.msg.size() <= 3000
+        && request.resource.data.from is string && request.resource.data.from.size() <= 100
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200;
+      allow read, update, delete: if isSida();
+    }
+
+    // Places Sida approved from suggestions: everyone sees them; only Sida adds or edits.
+    match /added/{id} {
+      allow read: if true;
+      allow write: if isSida();
+    }
   }
 }
